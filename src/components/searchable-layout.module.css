@@ -1,0 +1,30 @@
+.searchbar_container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  box-sizing: border-box;
+
+  & > input {
+    flex: 1; /* 버튼 영역 제외한 나머지 영역 차지 */
+    padding: 15px;
+    border: 1px solid rgb(220, 220, 220);
+    &:hover {
+      border: 2px solid rgb(0, 0, 220);
+    }
+  }
+
+  & > button {
+    padding: 10px 20px;
+    width: 80px;
+    border-radius: 5px; /* 모서리 각도 */
+    border: none; /* 보더 숨기기 */
+    background-color: rgb(37, 147, 225);
+    color: #fff;
+    font-weight: bold;
+
+    &:hover {
+      cursor: pointer;
+      background-color: rgba(27, 147, 225, 0.5);
+    }
+  }
+}
