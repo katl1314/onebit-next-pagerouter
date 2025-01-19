@@ -1,0 +1,36 @@
+.container {
+  background-color: white;
+  max-width: 600px; /* 최대 너비 */
+  min-height: 100vh; /* 최소 높이 100vh viewport height */
+  margin: 0 auto; /* 가운데 정렬*/
+  /* box-shadow 색상 위 오 아 왼 */
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 0px 29px 0px;
+  padding: 0px 15px;
+}
+
+/* header content */
+.header {
+  height: 60px;
+  font-weight: bold;
+  font-size: 18px;
+  line-height: 60px;
+
+  /* header내 a태그 css 적용 */
+  & > a {
+    text-decoration: none;
+    color: #000;
+  }
+}
+
+/* main content */
+.main {
+  padding-top: 10px;
+}
+
+/* footer content */
+.footer {
+  padding: 100px 0px;
+  color: gray;
+  height: 60px;
+  line-height: 60px;
+}
