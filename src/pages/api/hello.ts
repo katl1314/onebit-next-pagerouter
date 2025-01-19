@@ -7,7 +7,8 @@ type Data = {
 
 export default function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data>,
+  res: NextApiResponse<Data>
 ) {
+  // HTTP Status와 함께 json을 반환한다.
   res.status(200).json({ name: "John Doe" });
 }
