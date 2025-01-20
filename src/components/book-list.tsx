@@ -1,4 +1,3 @@
-import books from "@/mock/books.json";
 import BookItem from "./book-item";
 import { BookData } from "@/types/type";
 type BookListTypes = { books: BookData[] };

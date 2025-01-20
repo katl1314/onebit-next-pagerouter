@@ -20,6 +20,9 @@ export const getServerSideProps = async (props: GetServerSidePropsContext) => {
   };
 };
 
+// querystring은 사용자가 요청시 전달되므로 getStaticProps에서 query가져올 수없다.
+// 만약 SSG에서 검색을 처리하고자 할때는 리액트 처럼 마운트 이후에 가져와야함.
+
 // Next.js는 쿼리스트링을 읽는 과정에서 2번 렌더링한다.
 // 폴더 search내 index.tsx파일을 생성하면 /search로 접근 가능함.
 const Search = ({
