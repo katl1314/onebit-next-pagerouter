@@ -4,19 +4,16 @@ import { ReactNode } from "react";
 import BookList from "@/components/book-list";
 import { InferGetServerSidePropsType } from "next";
 import fetchBooks from "@/lib/fetch-books";
+import { BookData } from "@/types/type";
 
 // SSR를 위한 함수 => 사전 렌더링이 처리됨.
 export const getServerSideProps = async () => {
   // 페이지 컴포넌트보다 먼저 실행, 컴포넌트에 필요한 데이터를 불러오는 함수
   try {
-    // console.time("s");
-    // 비동기 요청을 병렬로 처리한다.
     const [books, recommends] = await Promise.all([
-      fetchBooks(""),
-      fetchBooks("random"),
+      fetchBooks<BookData[]>(""),
+      fetchBooks<BookData[]>("random"),
     ]);
-
-    // console.timeEnd("s");
 
     // Home 컴포넌트의 props으로 전달한다. 반환 타입은 반드시 객체타입이어야함.
     // console.log("서버에서 props를 생성한다.", books, recommends);
