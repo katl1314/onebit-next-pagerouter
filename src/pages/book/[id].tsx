@@ -1,17 +1,28 @@
 import React from "react";
-import { useRouter } from "next/router";
-import books from "@/mock/books.json";
 import Image from "next/image";
 import style from "./[id].module.css";
+import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
+import fetchBooks from "@/lib/fetch-books";
+import { BookData } from "@/types/type";
 
-const mockData = books[0]; // 첫번째 데이터를 목업으로하자.
+// 서버 사이드 렌더링
+export const getServerSideProps = async (props: GetServerSidePropsContext) => {
+  const bookId = props.params?.id ?? 0;
+  const book = await fetchBooks<BookData>(`${bookId}`);
+
+  return {
+    props: {
+      book,
+    },
+  };
+};
 
 // book/1 와 같은 동적 세그먼트만 적용함. 여러 동적 세그먼트 대응 X
-const Book = () => {
-  const { title, subTitle, description, author, publisher, coverImgUrl } =
-    mockData;
-  const router = useRouter();
-  const { id } = router.query;
+const Book = ({
+  book,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  if (!book) return new Error("도서정보를 불러오는데 문제가 발생하였습니다.");
+  const { title, subTitle, description, author, publisher, coverImgUrl } = book;
 
   return (
     <div className={style.container}>
