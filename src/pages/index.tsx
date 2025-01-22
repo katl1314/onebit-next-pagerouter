@@ -32,17 +32,29 @@ import { BookData } from "@/types/type";
 
 // SSG 사전 렌더링 방식 페이지 컴포넌트 실행전 실행한다.
 export const getStaticProps = async () => {
-  const [books, recommends] = await Promise.all([
-    fetchBooks<BookData[]>(""),
-    fetchBooks<BookData[]>("random"),
-  ]);
+  try {
+    const [books, recommends] = await Promise.all([
+      fetchBooks<BookData[]>(""),
+      fetchBooks<BookData[]>("random"),
+    ]);
 
-  return {
-    props: {
-      books,
-      recommends,
-    },
-  };
+    return {
+      props: {
+        books,
+        recommends,
+      },
+      // revalidate: 10, // 10초 주기마다 페이지 재생성 ISR (단위: sec)
+    };
+  } catch (err) {
+    console.error("Error fetching books:", err);
+    return {
+      props: {
+        books: [],
+        recommends: [],
+      },
+      revalidate: 10,
+    };
+  }
 };
 
 // InferGetServerSidePropsType<typeof getServerSideProps> : 우리가 정의한 getServerSideProps의 반환값 타입을 자동으로 추론한다.
