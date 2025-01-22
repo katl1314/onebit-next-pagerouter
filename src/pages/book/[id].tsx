@@ -1,15 +1,66 @@
 import React from "react";
 import Image from "next/image";
 import style from "./[id].module.css";
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
+import { GetStaticPropsContext, InferGetStaticPropsType } from "next";
 import fetchBooks from "@/lib/fetch-books";
 import { BookData } from "@/types/type";
+import { useRouter } from "next/router";
 
 // 서버 사이드 렌더링
-export const getServerSideProps = async (props: GetServerSidePropsContext) => {
-  const bookId = props.params?.id ?? 0;
-  const book = await fetchBooks<BookData>(`${bookId}`);
+// export const getServerSideProps = async (props: GetServerSidePropsContext) => {
+//   const bookId = props.params?.id ?? 0;
+//   const book = await fetchBooks<BookData>(`${bookId}`);
 
+//   return {
+//     props: {
+//       book,
+//     },
+//   };
+// };
+
+// 동적 경로에서 SSG 처리 시 getStaticPaths를 설정해야함.
+// SSG 빌드 타임에 생성할 경로를 명확하게 설정해야함.
+export const getStaticPaths = () => {
+  return {
+    paths: [
+      { params: { id: "1" } },
+      { params: { id: "2" } },
+      { params: { id: "3" } },
+    ],
+    fallback: false,
+  };
+};
+
+// fallback : 동적 경로에 SSG를 적용하기 위해서 getStaticPaths함수에 지정되지 않는 경로를 요청했을때 어떻게 처리할 것인가?
+// false : 빌드 타임에 생성되지 않는 페이지에 접근시 무조건 Not-Found를 반환한다.
+// 'blocking' : 빌드 타임에 생성되지 않았더라도 SSR처럼 사전렌더링 발생
+// true : Props가 제외한 상태로 UI를 렌더링하고 Props를 따로 계산하고 반환한다.
+
+// 동적 라우터에서 SSG 적용하기
+export const getStaticProps = async (context: GetStaticPropsContext) => {
+  /**
+   * {
+   *  props: {},
+   *  redirect : { destination: '/', permanent: false },
+   *  notFound : ture,
+   *  revalidate
+   * }
+   */
+  const id = context.params!.id; // ! null이 아니다라는 뜻
+  if (!id) {
+    return new Error();
+  }
+
+  const book = await fetchBooks<BookData>(`${id}`);
+
+  // 만약 도서 정보가 없을때 404 페이지를 표시하고 싶다.
+  if (!book) {
+    return {
+      notFound: true,
+    };
+  }
+
+  // 페이지 컴포넌트의 props으로 전달한다.
   return {
     props: {
       book,
@@ -18,10 +69,13 @@ export const getServerSideProps = async (props: GetServerSidePropsContext) => {
 };
 
 // book/1 와 같은 동적 세그먼트만 적용함. 여러 동적 세그먼트 대응 X
-const Book = ({
-  book,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  if (!book) return new Error("도서정보를 불러오는데 문제가 발생하였습니다.");
+const Book = ({ book }: InferGetStaticPropsType<typeof getStaticProps>) => {
+  const router = useRouter();
+
+  // 현재 fallback상태인가? => 로딩중입니다. 표시
+  if (router.isFallback) return "데이터 로딩중입니다.";
+
+  if (!book) return "도서정보를 불러오는데 문제가 발생하였습니다.";
   const { title, subTitle, description, author, publisher, coverImgUrl } = book;
 
   return (
