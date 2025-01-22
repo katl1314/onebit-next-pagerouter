@@ -5,6 +5,7 @@ import { GetStaticPropsContext, InferGetStaticPropsType } from "next";
 import fetchBooks from "@/lib/fetch-books";
 import { BookData } from "@/types/type";
 import { useRouter } from "next/router";
+import Head from "next/head";
 
 // 서버 사이드 렌더링
 // export const getServerSideProps = async (props: GetServerSidePropsContext) => {
@@ -73,13 +74,31 @@ const Book = ({ book }: InferGetStaticPropsType<typeof getStaticProps>) => {
   const router = useRouter();
 
   // 현재 fallback상태인가? => 로딩중입니다. 표시
-  if (router.isFallback) return "데이터 로딩중입니다.";
-
+  // fallback상태시에도 메타태그를 추가해야한다.
+  if (router.isFallback) {
+    return (
+      <>
+        <Head>
+          <title>{"한입북스"}</title>
+          <meta property="og:image" content="/thumbnail.png" />
+          <meta property="og:title" content={"한입북스"} />
+          <meta property="og:description" content={"한입북스"} />
+        </Head>
+        데이터 로딩중입니다.
+      </>
+    );
+  }
   if (!book) return "도서정보를 불러오는데 문제가 발생하였습니다.";
   const { title, subTitle, description, author, publisher, coverImgUrl } = book;
 
   return (
     <div className={style.container}>
+      <Head>
+        <title>{title}</title>
+        <meta property="og:image" content={coverImgUrl} />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+      </Head>
       <div
         className={style.cover_img_container}
         style={{

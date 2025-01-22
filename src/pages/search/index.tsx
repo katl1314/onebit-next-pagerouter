@@ -4,6 +4,8 @@ import BookList from "@/components/book-list";
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import fetchBooks from "@/lib/fetch-books";
 import { BookData } from "@/types/type";
+import Head from "next/head";
+import { useRouter } from "next/router";
 
 // getServerSideProps => Page Router에서 SSR를 처리하기 위한 함수
 // 페이지 컴포넌트 호출 전에 먼저 실행함.
@@ -28,8 +30,19 @@ export const getServerSideProps = async (props: GetServerSidePropsContext) => {
 const Search = ({
   books,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  const router = useRouter();
+
   return (
     <div>
+      <Head>
+        <title>도서 검색 결과: {router.query.name}</title>
+        <meta property="og:image" content="/thumbnail.png" />
+        <meta property="og:title" content="한입북스" />
+        <meta
+          property="og:description"
+          content="한입북스에 등록된 도서들을 만나보세요"
+        />
+      </Head>
       <BookList books={books} />
     </div>
   );

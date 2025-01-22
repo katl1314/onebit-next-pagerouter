@@ -5,6 +5,7 @@ import BookList from "@/components/book-list";
 import { InferGetStaticPropsType } from "next";
 import fetchBooks from "@/lib/fetch-books";
 import { BookData } from "@/types/type";
+import Head from "next/head";
 
 // SSR를 위한 함수 => 사전 렌더링이 처리됨.
 // export const getServerSideProps = async () => {
@@ -30,7 +31,7 @@ import { BookData } from "@/types/type";
 //   }
 // };
 
-// SSG 사전 렌더링 방식 페이지 컴포넌트 실행전 실행한다.
+// SSG 사전 렌더링 방식 페이지 컴포넌트 실행전 실행한다. context: GetStaticPropsContext
 export const getStaticProps = async () => {
   try {
     const [books, recommends] = await Promise.all([
@@ -46,7 +47,6 @@ export const getStaticProps = async () => {
       // revalidate: 10, // 10초 주기마다 페이지 재생성 ISR (단위: sec)
     };
   } catch (err) {
-    console.error("Error fetching books:", err);
     return {
       props: {
         books: [],
@@ -64,16 +64,28 @@ export default function Home({
 }: InferGetStaticPropsType<typeof getStaticProps>) {
   // console.log("클라이언트 + 서버 한번씩 실행된다");
   return (
-    <div className={style.container}>
-      <section>
-        <h3>지금 추천하는 도서</h3>
-        <BookList books={recommends} />
-      </section>
-      <section>
-        <h3>등록된 모든 도서</h3>
-        <BookList books={books} />
-      </section>
-    </div>
+    <>
+      {/* 메타태그 추가 가능 */}
+      <Head>
+        <title>한입북스</title>
+        <meta property="og:image" content="/thumbnail.png" />
+        <meta property="og:title" content="한입북스" />
+        <meta
+          property="og:description"
+          content="한입북스에 등록된 도서들을 만나보세요"
+        />
+      </Head>
+      <div className={style.container}>
+        <section>
+          <h3>지금 추천하는 도서</h3>
+          <BookList books={recommends} />
+        </section>
+        <section>
+          <h3>등록된 모든 도서</h3>
+          <BookList books={books} />
+        </section>
+      </div>
+    </>
   );
 }
 
