@@ -46,7 +46,7 @@ export const getStaticProps = async () => {
       },
       // revalidate: 10, // 10초 주기마다 페이지 재생성 ISR (단위: sec)
     };
-  } catch (err) {
+  } catch {
     return {
       props: {
         books: [],
