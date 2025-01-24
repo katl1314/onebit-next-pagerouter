@@ -44,29 +44,37 @@ export const getStaticProps = async (context: GetStaticPropsContext) => {
    *  props: {},
    *  redirect : { destination: '/', permanent: false },
    *  notFound : ture,
-   *  revalidate
+   *  revalidate : ISR 일정 주기별로 SSG 페이지를 재생성한다.
    * }
    */
-  const id = context.params!.id; // ! null이 아니다라는 뜻
-  if (!id) {
-    return new Error();
-  }
+  try {
+    const id = context.params!.id; // ! null이 아니다라는 뜻
+    if (!id) {
+      return new Error();
+    }
 
-  const book = await fetchBooks<BookData>(`${id}`);
+    const book = await fetchBooks<BookData>(`${id}`);
 
-  // 만약 도서 정보가 없을때 404 페이지를 표시하고 싶다.
-  if (!book) {
+    // 만약 도서 정보가 없을때 404 페이지를 표시하고 싶다.
+    if (!book) {
+      return {
+        notFound: true,
+      };
+    }
+
+    // 페이지 컴포넌트의 props으로 전달한다.
     return {
-      notFound: true,
+      props: {
+        book,
+      },
+    };
+  } catch {
+    return {
+      props: {
+        book: null,
+      },
     };
   }
-
-  // 페이지 컴포넌트의 props으로 전달한다.
-  return {
-    props: {
-      book,
-    },
-  };
 };
 
 // book/1 와 같은 동적 세그먼트만 적용함. 여러 동적 세그먼트 대응 X
