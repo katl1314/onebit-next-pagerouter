@@ -15,6 +15,7 @@ const SearchableLayout: FC<PropsWithChildren> = ({ children }) => {
   const [search, setSearch] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // 컴포넌트 마운트 되었을때 검색 결과를 입력창에 표시한다.
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.value = (name ?? "") as string;
